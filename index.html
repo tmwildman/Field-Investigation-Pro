@@ -4,50 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Utility Damage Investigator Pro - Forensic Master</title>
+    <title>Forensic Utility Investigator Pro - Master Build</title>
     <style>
         :root { 
-            --primary: #004a99; --secondary: #28a745; --danger: #d9534f; 
+            --primary: #004a99; --comm-orange: #ff8c00; --secondary: #28a745; --danger: #d9534f; 
             --bg: #f4f7f6; --text: #333; --card: #ffffff; --border: #ced4da;
         }
         body.solar-mode { --bg: #ffffff; --text: #000; --card: #fff; --border: #000; }
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); padding: 0; margin: 0; }
         
-        /* Navigation */
         nav { display: flex; background: var(--primary); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        nav button { flex: 1; padding: 15px; border: none; background: none; color: white; font-weight: bold; font-size: 13px; cursor: pointer; border-bottom: 4px solid transparent; text-transform: uppercase; }
+        nav button { flex: 1; padding: 15px; border: none; background: none; color: white; font-weight: bold; font-size: 11px; cursor: pointer; border-bottom: 4px solid transparent; text-transform: uppercase; }
         nav button.active { border-bottom: 4px solid white; background: rgba(255,255,255,0.1); }
 
-        .container { max-width: 700px; margin: auto; padding: 15px; }
+        .container { max-width: 750px; margin: auto; padding: 15px; }
         .section { display: none; }
         .section.active { display: block; }
 
         .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid var(--border); }
-        h3 { font-size: 0.9rem; margin: 0 0 10px; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        h3 { font-size: 0.85rem; margin: 0 0 10px; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
 
         .row { display: flex; gap: 8px; margin-bottom: 10px; }
-        label { display: block; font-weight: bold; margin: 10px 0 5px; font-size: 0.8rem; }
+        label { display: block; font-weight: bold; margin: 10px 0 5px; font-size: 0.75rem; }
         input, textarea, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
 
-        #gps-data { font-family: monospace; font-size: 1rem; margin: 5px 0; background: #f0f0f0; padding: 8px; border-radius: 4px; }
-        #gps-accuracy { font-weight: bold; font-size: 0.8rem; }
-
-        .audit-grid { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
-        .audit-row { display: contents; font-size: 0.85rem; }
-        .audit-q { padding: 5px 0; border-bottom: 1px solid #f0f0f0; }
-        .audit-a { border-bottom: 1px solid #f0f0f0; padding: 5px 0; }
-
-        .btn-full { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
-        .btn-tool { background: #eee; border: 1px solid #ccc; padding: 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 600; flex: 1; }
-        .badge { background: #333; color: gold; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+        #gps-data { font-family: monospace; font-size: 0.9rem; background: #f0f0f0; padding: 8px; border-radius: 4px; border-left: 4px solid var(--comm-orange); }
+        .badge { background: #333; color: gold; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer; }
         
+        .audit-grid { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+        .audit-row { display: contents; font-size: 0.8rem; }
+        .audit-q { padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
+
+        .btn-full { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-tool { background: #eee; border: 1px solid #ccc; padding: 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; flex: 1; cursor: pointer; }
+
         .accordion { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px; overflow: hidden; }
-        .acc-header { background: #eee; padding: 12px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; font-size: 0.9rem; }
-        .acc-body { padding: 15px; display: none; background: white; font-size: 0.9rem; }
-        .swatch { display: inline-block; width: 18px; height: 18px; margin-right: 8px; vertical-align: middle; border: 1px solid #999; }
+        .acc-header { background: #eee; padding: 12px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; font-size: 0.85rem; }
+        .acc-body { padding: 15px; display: none; background: white; font-size: 0.85rem; line-height: 1.4; }
+        .swatch { display: inline-block; width: 16px; height: 16px; margin-right: 8px; vertical-align: middle; border: 1px solid #999; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; display: none; }
-        .modal-content { background: white; margin: 15% auto; padding: 20px; width: 85%; border-radius: 10px; max-height: 75vh; overflow-y: auto; }
+        .modal-content { background: white; margin: 10% auto; padding: 25px; width: 85%; border-radius: 12px; max-height: 80vh; overflow-y: auto; }
 
         @media print { nav, .btn-tool, .btn-full, .badge-row { display: none !important; } .section { display: block !important; } }
     </style>
@@ -56,17 +53,17 @@
 
     <div id="modal" class="modal">
         <div class="modal-content">
-            <h2 style="color:var(--primary); margin-top:0;">Forensic Consent</h2>
-            <p><strong>Legal Reference:</strong> This tool utilizes summaries of Ohio 811 laws (HB 227). This is guidance, not legal advice.</p>
-            <p><strong>GPS Evidence:</strong> You agree that GPS and weather data captured are verified by you on-site. Accuracy depends on hardware and sky visibility.</p>
-            <p><strong>Hazards:</strong> Call 911 for gas or electrical strikes before documenting.</p>
-            <button class="btn-full" onclick="acceptTerms()">I AGREE & ENTER APP</button>
+            <h2 style="color:var(--primary); margin-top:0;">Forensic Authorization</h2>
+            <p><strong>Notice:</strong> This tool is configured for Utility Damage Investigators. Calculations comply with ASCE 38-22 and state-specific 811 statutes.</p>
+            <p><strong>GPS Context:</strong> Tolerance zones adjust automatically between 18" (OH, MI, PA) and 24" (IN).</p>
+            <button class="btn-full" onclick="acceptTerms()">I AGREE & ENTER FIELD FORM</button>
         </div>
     </div>
 
     <nav>
         <button id="btn-inv" class="active" onclick="tab('investigation')">Field Form</button>
-        <button id="btn-ref" onclick="tab('reference')">811 Pocket Book</button>
+        <button id="btn-hdd" onclick="tab('hdd')">Bore/HDD</button>
+        <button id="btn-ref" onclick="tab('reference')">Pocket Book</button>
     </nav>
 
     <div class="container">
@@ -74,134 +71,141 @@
         <div id="investigation" class="section active">
             <div class="row badge-row">
                 <button class="btn-tool" onclick="document.body.classList.toggle('solar-mode')">🔆 Solar Mode</button>
-                <button class="btn-tool" onclick="syncAll()">📍 Precision Sync</button>
+                <button class="btn-tool" onclick="getGPS()">📍 Sync Loc</button>
             </div>
 
             <div class="card">
-                <h3>1. GPS & Evidence Lock</h3>
-                <div id="gps-data">Awaiting Satellites...</div>
-                <div id="gps-accuracy">Accuracy: --</div>
+                <h3>1. Forensic Location Sync</h3>
+                <div id="gps-data">Awaiting Satellite Lock...</div>
                 <div class="row" style="margin-top:10px;">
-                    <span id="stateDisplay" class="badge">DETECTING...</span>
+                    <span id="stateDisplay" class="badge" onclick="manualStateCycle()">LAW: OHIO (18")</span>
                     <span id="weatherDisplay" class="badge" style="background:var(--primary)">WX: --</span>
                 </div>
             </div>
 
             <div class="card">
-                <h3>2. Ticket & Site Details</h3>
-                <div class="row">
-                    <input type="text" id="claimId" placeholder="Ticket #">
-                    <button class="btn-tool" style="flex: 0 0 100px;" onclick="searchOhio811()">Verify</button>
-                </div>
-                <input type="text" id="address" placeholder="Incident Address" style="margin-top:8px;">
+                <h3>2. Incident Details</h3>
+                <input type="text" id="claimId" placeholder="Ticket # / Claim ID" style="margin-bottom:8px;">
+                <input type="text" id="address" placeholder="Incident Address / Intersection">
                 <div class="row" style="margin-top:10px;">
-                    <div style="flex:1"><label>Exposure</label>
-                        <select id="expo"><option>Exposed</option><option>Covered</option><option>Backfilled</option></select>
+                    <div style="flex:1"><label>Asset Under Audit</label>
+                        <select id="asset"><option>Fiber Optic</option><option>Coax/Communication</option><option>Electric (NESC)</option></select>
                     </div>
-                    <div style="flex:1"><label>Cameras Present?</label>
-                        <select id="cam"><option>No</option><option>Yes</option></select>
+                    <div style="flex:1"><label>Surveillance?</label>
+                        <select id="cam"><option>No</option><option>Yes (Doorbell)</option><option>Yes (Commercial)</option></select>
                     </div>
                 </div>
-                <input type="text" id="camLoc" placeholder="Camera Location Details" style="margin-top:8px;">
             </div>
 
-            <div class="card" style="border-left: 4px solid var(--secondary);">
-                <h3>3. Forensic Physical Audit</h3>
+            <div class="card" style="border-left: 4px solid var(--comm-orange);">
+                <h3>3. Comm-Spec Physical Audit</h3>
                 <div class="audit-grid">
-                    <div class="audit-row"><div class="audit-q">Hand-Digging (Pothole) Used?</div><div class="audit-a"><input type="checkbox" id="e1"></div></div>
-                    <div class="audit-row"><div class="audit-q">Warning Tape/Sand Found?</div><div class="audit-a"><input type="checkbox" id="e2"></div></div>
-                    <div class="audit-row"><div class="audit-q">Within Ticket Scope?</div><div class="audit-a"><input type="checkbox" id="e3"></div></div>
-                    <div class="audit-row"><div class="audit-q">White Lining Present?</div><div class="audit-a"><input type="checkbox" id="e4"></div></div>
-                    <div class="audit-row"><div class="audit-q">811 Called Immediately?</div><div class="audit-a"><input type="checkbox" id="e5"></div></div>
+                    <div class="audit-row"><div class="audit-q">Tracer Wire Present?</div><div class="audit-a"><input type="checkbox" id="a1"></div></div>
+                    <div class="audit-row"><div class="audit-q">Within Ticket Scope?</div><div class="audit-a"><input type="checkbox" id="a2"></div></div>
+                    <div class="audit-row"><div class="audit-q">Hand-Digging Evid?</div><div class="audit-a"><input type="checkbox" id="a3"></div></div>
+                    <div class="audit-row"><div class="audit-q">811 Called Immed?</div><div class="audit-a"><input type="checkbox" id="a4"></div></div>
                 </div>
-                <div class="row" style="margin-top:10px;">
-                    <div style="flex:1"><label>Depth (in)</label><input type="number" id="depth"></div>
-                    <div style="flex:1"><label>Soil Type</label>
-                        <select id="soil"><option>Clay</option><option>Sand</option><option>Rock/Shale</option><option>Loam</option></select>
-                    </div>
-                </div>
-                <label>Impact Scar Type</label>
+                <label>Forensic Scar Classification</label>
                 <select id="scar">
-                    <option value="Bucket">Bucket Tooth (Mechanical)</option>
-                    <option value="Hand">Hand Tool (Accidental Nick)</option>
-                    <option value="Drill">Drill Bit (Directional Piercing)</option>
-                    <option value="Shear">Shear/Snap (Machine Strain)</option>
+                    <option value="Fiber Shear">Fiber Shear (High Tension Snap)</option>
+                    <option value="Coax Kink">Coax Kink (Bend Radius Violation)</option>
+                    <option value="Gouge">Mechanized Gouge (Bucket Tooth)</option>
+                    <option value="Arc">Arc Burn (High Voltage Contact)</option>
+                    <option value="Bore">Bore Entry (Drill Bit Piercing)</option>
                 </select>
+                <div class="row">
+                    <div style="flex:1"><label>Depth (in)</label><input type="number" id="depth"></div>
+                    <div style="flex:1"><label>Soil</label><select><option>Clay</option><option>Rock/Shale</option><option>Sand</option></select></div>
+                </div>
             </div>
 
-            <div class="card" style="background:#eef6ff;">
-                <h3>4. Tolerance Zone Calculator</h3>
-                <p style="font-size: 0.7rem; color: var(--primary); font-style: italic;">OH Law: 18" + half pipe diameter.</p>
+            <div class="card" style="background:#fffcf5; border: 1px solid var(--comm-orange);">
+                <h3>4. Tolerance Zone Logic</h3>
                 <div class="row">
-                    <div style="flex:1"><label>Pipe Dia (in)</label><input type="number" id="pDia" value="0" oninput="calc()"></div>
-                    <div style="flex:1"><label>Dist. Off (in)</label><input type="number" id="dOff" oninput="calc()"></div>
+                    <div style="flex:1"><label>Asset Dia (in)</label><input type="number" id="pDia" value="0.5" oninput="calc()"></div>
+                    <div style="flex:1"><label>Dist. from Mark (in)</label><input type="number" id="dOff" oninput="calc()"></div>
                 </div>
-                <div id="res" class="calc-result" style="background:#fff; padding:10px; border-radius:6px; font-weight:bold; text-align:center; border:1px solid #ccc;">Pending Data</div>
+                <div id="res" style="background:#fff; padding:15px; border-radius:6px; font-weight:bold; text-align:center; border:1px solid #ccc;">Pending GPS Sync...</div>
             </div>
 
             <div class="card">
-                <h3>5. Final Liability Conclusion</h3>
-                <label>CGA Root Cause Code</label>
-                <select id="root">
-                    <option value="">-- Choose Category --</option>
-                    <option value="1">1. No Notification Made (No Ticket)</option>
-                    <option value="2">2. Digging Practices: Improper Hand Digging</option>
-                    <option value="3">3. Digging Practices: Failure to maintain marks</option>
-                    <option value="4">4. Locate Practices: Facility Not Marked</option>
-                    <option value="5">5. Locate Practices: Inaccurate Marking</option>
-                    <option value="6">6. Mapping: Incorrect Records</option>
+                <h3>5. Final Liability & Recovery</h3>
+                <select id="root" style="margin-bottom:10px;">
+                    <option value="">-- CGA Root Cause Code --</option>
+                    <option value="1">1. No Notification / No Ticket</option>
+                    <option value="2">2. Improper Excavation in TZ</option>
+                    <option value="3">3. Failure to Maintain Marks</option>
+                    <option value="4">4. Inaccurate Marking (>TZ)</option>
+                    <option value="5">5. HDD: Failure to Pothole</option>
                 </select>
-                <label>Primary Responsibility</label>
-                <select id="fault"><option value="E">Excavator Fault</option><option value="L">Locator Fault</option><option value="U">Utility Owner Fault</option></select>
-                <textarea id="notes" rows="4" placeholder="Professional Investigative Narrative..."></textarea>
-                <button class="btn-full" onclick="window.print()">FINAL LEGAL PDF REPORT</button>
+                <textarea id="notes" rows="4" placeholder="Forensic Investigator Narrative..."></textarea>
+                
+                <div class="row" style="margin-top:10px;">
+                    <button class="btn-tool" style="background:var(--secondary); color:white; border:none;" onclick="copyReport()">📋 Copy Report</button>
+                    <button class="btn-tool" onclick="window.print()">🖨️ Print PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="hdd" class="section">
+            <div class="card">
+                <h3>Bore Work / HDD Forensic Audit</h3>
+                <div class="audit-grid">
+                    <div class="audit-row"><div class="audit-q">Crossing Potholed? (ASCE 38)</div><div class="audit-a"><input type="checkbox"></div></div>
+                    <div class="audit-row"><div class="audit-q">Bore Log Provided?</div><div class="audit-a"><input type="checkbox"></div></div>
+                    <div class="audit-row"><div class="audit-q">Sonde Tracking Active?</div><div class="audit-a"><input type="checkbox"></div></div>
+                    <div class="audit-row"><div class="audit-q">Sonde Data vs Log Sync?</div><div class="audit-a"><input type="checkbox"></div></div>
+                </div>
+                <label style="margin-top:15px;">Drill Speed Assessment</label>
+                <select id="boreSpeed"><option>Consistent with Tracker</option><option>Outran Tracker (Boring Blind)</option><option>Inconsistent/High</option></select>
+                <p style="font-size:0.75rem; color:#666; margin-top:10px;">Note: HDD liability rests on "physical verification" standards. If the operator didn't see the utility via pothole, they are typically liable for the strike.</p>
             </div>
         </div>
 
         <div id="reference" class="section">
-            <input type="text" id="search" onkeyup="filterRef()" placeholder="Search Reference Guide..." style="width:100%; padding:12px; margin-bottom:15px; border-radius:6px; border:1px solid #ccc;">
+            <input type="text" id="search" onkeyup="filterRef()" placeholder="Search Statutes & Standards..." style="width:100%; padding:12px; margin-bottom:15px; border-radius:6px; border:1px solid #ccc;">
+            
+            <div class="accordion"><div class="acc-header" onclick="toggleAcc('ohLaw')">OHIO (OUPS) 811 <span>+</span></div><div id="ohLaw" class="acc-body">ORC 3781 / HB 227: 18" Tolerance Zone. 48hr Notice. 16 Day ticket life.</div></div>
+            <div class="accordion"><div class="acc-header" onclick="toggleAcc('inLaw')">INDIANA 811 <span>+</span></div><div id="inLaw" class="acc-body">IC 8-1-26: 24" Tolerance Zone. 2 Full Working Day Notice.</div></div>
+            <div class="accordion"><div class="acc-header" onclick="toggleAcc('miLaw')">MICHIGAN (MISS DIG) <span>+</span></div><div id="miLaw" class="acc-body">PA 174: 18" Tolerance Zone. 3 Full Working Day Notice. 21 Day ticket life.</div></div>
+            <div class="accordion"><div class="acc-header" onclick="toggleAcc('paLaw')">PENNSYLVANIA 811 <span>+</span></div><div id="paLaw" class="acc-body">Act 287: 18" Tolerance Zone. 3-10 Day Notice. 10 Day ticket life.</div></div>
             
             <div class="accordion">
-                <div class="acc-header" onclick="toggleAcc('rules')">Ohio Law (HB 227) <span>+</span></div>
-                <div id="rules" class="acc-body">
-                    <ul>
-                        <li><strong>Notification:</strong> 48 hours / 2 working days required.</li>
-                        <li><strong>Ticket Life:</strong> 16 calendar days from notice date.</li>
-                        <li><strong>Tolerance Zone:</strong> 18 inches + half the diameter.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="accordion">
-                <div class="acc-header" onclick="toggleAcc('faultRef')">ORC 3781 Liability <span>+</span></div>
-                <div id="faultRef" class="acc-body">
-                    <p><strong>Excavator:</strong> Liable for mechanical digging in tolerance zone, failure to pothole, or failure to maintain marks.</p>
-                    <p><strong>Utility/Locator:</strong> Liable for missed marks, incorrect marks (>18" off), or no Positive Response.</p>
+                <div class="acc-header" onclick="toggleAcc('forensicStds')">Forensic Standards & Codes <span>+</span></div>
+                <div id="forensicStds" class="acc-body">
+                    <strong>ASCE 38-22:</strong> Level A (Physical exposure) required for crossings.<br><br>
+                    <strong>NESC Rule 232:</strong> Governing clearances for overhead fiber/electric. Failure to meet NESC = shared liability.<br><br>
+                    <strong>ANSI A300:</strong> Critical Root Zone recovery for landscape/tree loss.<br><br>
+                    <strong>ASCE 75:</strong> Mapping precision for as-built records.
                 </div>
             </div>
 
             <div class="accordion">
                 <div class="acc-header" onclick="toggleAcc('colors')">APWA Color Codes <span>+</span></div>
                 <div id="colors" class="acc-body">
+                    <div><span class="swatch" style="background:orange"></span> ORANGE: Comm / Fiber / Coax</div>
                     <div><span class="swatch" style="background:red"></span> RED: Electric</div>
-                    <div><span class="swatch" style="background:yellow"></span> YELLOW: Gas / Oil / Steam</div>
-                    <div><span class="swatch" style="background:orange"></span> ORANGE: Communications / CATV</div>
-                    <div><span class="swatch" style="background:blue"></span> BLUE: Potable Water</div>
-                    <div><span class="swatch" style="background:green"></span> GREEN: Sewer / Drain</div>
-                    <div><span class="swatch" style="background:purple"></span> PURPLE: Reclaimed Water</div>
-                    <div><span class="swatch" style="background:white"></span> WHITE: Proposed Excavation</div>
+                    <div><span class="swatch" style="background:yellow"></span> YELLOW: Gas / Oil</div>
+                    <div><span class="swatch" style="background:blue"></span> BLUE: Water</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        const lawData = {
+            "OH": { name: "Ohio", buffer: 18 },
+            "IN": { name: "Indiana", buffer: 24 },
+            "MI": { name: "Michigan", buffer: 18 },
+            "PA": { name: "Pennsylvania", buffer: 18 }
+        };
+        let currentLaw = lawData["OH"];
+
         function tab(name) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
             document.getElementById(name).classList.add('active');
-            if(name === 'investigation') { document.getElementById('btn-inv').classList.add('active'); syncAll(); }
-            else { document.getElementById('btn-ref').classList.add('active'); }
+            document.getElementById('btn-' + name.substring(0,3)).classList.add('active');
         }
 
         function toggleAcc(id) {
@@ -216,52 +220,103 @@
             });
         }
 
-        function syncAll() { getGPS(); }
-
-        function getGPS() {
+        async function getGPS() {
             if (!navigator.geolocation) return;
             navigator.geolocation.getCurrentPosition(async pos => {
-                const lat = pos.coords.latitude.toFixed(6);
-                const lon = pos.coords.longitude.toFixed(6);
-                const acc = pos.coords.accuracy.toFixed(1);
-                document.getElementById('gps-data').innerHTML = `LAT: ${lat}<br>LON: ${lon}`;
-                document.getElementById('gps-accuracy').innerHTML = `Accuracy: +/- ${acc}m`;
-                document.getElementById('gps-accuracy').style.color = (acc > 10) ? "var(--danger)" : "var(--secondary)";
+                const lat = pos.coords.latitude.toFixed(5);
+                const lon = pos.coords.longitude.toFixed(5);
+                document.getElementById('gps-data').innerHTML = `COORD: ${lat}, ${lon}<br>ACCURACY: +/- ${pos.coords.accuracy.toFixed(1)}m`;
                 
                 try {
-                    const geo = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-                    const gData = await geo.json();
-                    document.getElementById('stateDisplay').innerText = `STATE: ${(gData.address.state || "OH").toUpperCase()}`;
-                    
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                    const data = await res.json();
+                    const state = (data.address.state || "OH").toUpperCase();
+                    applyStateLaw(state);
+
                     const wx = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
                     const wData = await wx.json();
                     document.getElementById('weatherDisplay').innerText = `WX: ${(wData.current_weather.temperature * 9/5 + 32).toFixed(0)}°F`;
-                } catch(e) {}
+                } catch(e) { applyStateLaw("OH"); }
             }, null, { enableHighAccuracy: true });
+        }
+
+        function applyStateLaw(state) {
+            let code = "OH";
+            if(state.includes("INDIANA")) code = "IN";
+            else if(state.includes("MICHIGAN")) code = "MI";
+            else if(state.includes("PENNSYLVANIA")) code = "PA";
+            else if(state.includes("OHIO")) code = "OH";
+
+            currentLaw = lawData[code] || lawData["OH"];
+            document.getElementById('stateDisplay').innerText = `LAW: ${currentLaw.name} (${currentLaw.buffer}")`;
+            calc();
+        }
+
+        function manualStateCycle() {
+            const codes = Object.keys(lawData);
+            let currentKey = "OH";
+            if(currentLaw.name === "Indiana") currentKey = "IN";
+            if(currentLaw.name === "Michigan") currentKey = "MI";
+            if(currentLaw.name === "Pennsylvania") currentKey = "PA";
+            
+            let idx = codes.indexOf(currentKey);
+            let next = codes[(idx + 1) % codes.length];
+            applyStateLaw(next);
         }
 
         function calc() {
             const dia = parseFloat(document.getElementById('pDia').value) || 0;
             const off = parseFloat(document.getElementById('dOff').value) || 0;
-            const limit = 18 + (dia / 2);
+            const limit = currentLaw.buffer + (dia / 2);
             const r = document.getElementById('res');
-            if (off === 0) { r.innerText = "Pending Data"; r.style.background="#fff"; }
-            else if (off <= limit) { r.innerText = `🚨 EXCAVATOR FAULT (Within ${limit}")`; r.style.background="#f8d7da"; r.style.color="#721c24"; }
-            else { r.innerText = `✅ LOCATOR FAULT (Outside ${limit}")`; r.style.background="#d4edda"; r.style.color="#155724"; }
+            
+            if (off === 0) { 
+                r.innerText = `Awaiting Entry (${currentLaw.name} TZ: ${currentLaw.buffer}")`; 
+                r.style.background="#fff"; 
+            } else if (off <= limit) { 
+                r.innerText = `🚨 EXCAVATOR FAULT (Within ${limit}" TZ)`; 
+                r.style.background = "#f8d7da"; r.style.color = "#721c24";
+            } else { 
+                r.innerText = `✅ LOCATOR FAULT (Outside ${limit}" TZ)`; 
+                r.style.background = "#d4edda"; r.style.color = "#155724";
+            }
         }
 
-        function searchOhio811() {
-            const t = document.getElementById('claimId').value;
-            if(t) window.open(`https://www.oups.org/search-for-a-ticket/`, '_blank');
+        function copyReport() {
+            const claim = document.getElementById('claimId').value || "N/A";
+            const loc = document.getElementById('address').value || "N/A";
+            const gps = document.getElementById('gps-data').innerText.replace(/\n/g, ' ');
+            const res = document.getElementById('res').innerText;
+            const notes = document.getElementById('notes').value;
+            const asset = document.getElementById('asset').value;
+            const state = currentLaw.name;
+            const scar = document.getElementById('scar').value;
+
+            const reportText = `FORENSIC INVESTIGATION REPORT\n` +
+                               `------------------------------\n` +
+                               `Ticket/Claim: ${claim}\n` +
+                               `Jurisdiction: ${state} (${currentLaw.buffer}" Buffer)\n` +
+                               `Asset audited: ${asset}\n` +
+                               `Impact Classification: ${scar}\n` +
+                               `Location: ${loc}\n` +
+                               `Evidence Lock (GPS/WX): ${gps}\n\n` +
+                               `LIABILITY FINDING: ${res}\n\n` +
+                               `INVESTIGATOR NARRATIVE:\n${notes}`;
+
+            navigator.clipboard.writeText(reportText).then(() => {
+                alert("Forensic Report copied to clipboard!");
+            }).catch(err => {
+                alert("Copy failed: " + err);
+            });
         }
 
         function acceptTerms() {
-            localStorage.setItem('ted_app_consent', 'true');
+            localStorage.setItem('ted_forensic_master_consent', 'true');
             document.getElementById('modal').style.display = 'none';
         }
 
         window.onload = () => {
-            if(!localStorage.getItem('ted_app_consent')) { document.getElementById('modal').style.display = 'block'; }
+            if(!localStorage.getItem('ted_forensic_master_consent')) document.getElementById('modal').style.display = 'block';
             getGPS();
         };
     </script>
