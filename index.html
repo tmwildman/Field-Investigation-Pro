@@ -1,36 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Utility Field Investigator Pro v2</title>
-<style>
-:root{--primary:#004a99;--accent:#ff8c00;--secondary:#28a745;--danger:#d9534f;--bg:#f4f7f6;--text:#333;--card:#fff;--border:#ced4da}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}
-body.solar-mode{--bg:#fff;--text:#000;--card:#fff;--border:#000}
-nav{display:flex;background:var(--primary);position:sticky;top:0;z-index:100}
-nav button{flex:1;padding:14px;border:none;background:none;color:#fff;font-weight:700;font-size:11px;border-bottom:4px solid transparent;text-transform:uppercase}
-nav button.active{border-bottom-color:#fff;background:rgba(255,255,255,.12)}
-.container{max-width:1000px;margin:auto;padding:14px}.section{display:none}.section.active{display:block}
-.card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 4px 15px rgba(0,0,0,.09);border:1px solid var(--border)}
-h3{font-size:.82rem;margin:0 0 10px;color:var(--primary);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #eee;padding-bottom:6px}
-.row{display:flex;gap:8px;flex-wrap:wrap}.col{flex:1;min-width:220px}
-label{display:block;font-weight:700;margin:10px 0 5px;font-size:.75rem}
-input,textarea,select{width:100%;padding:12px;border:1px solid var(--border);border-radius:6px;box-sizing:border-box;font-size:1rem;background:#fff}
-textarea{resize:vertical}
-.btn-tool,.btn-full{border:none;border-radius:8px;cursor:pointer;font-weight:700}
-.btn-tool{background:#eee;border:1px solid #ccc;padding:10px 12px;font-size:.8rem;min-width:120px}.btn-full{width:100%;padding:14px;background:var(--primary);color:#fff;margin-top:10px}
-.badge{background:#333;color:#fff;padding:4px 8px;border-radius:4px;font-size:.7rem;font-weight:700;display:inline-block;margin-right:6px}
-.badge.good{background:#1f7a3b}.badge.warn{background:#b06b00}.badge.bad{background:#8d1c1c}
-#gps-data,#jurisdictionBanner,#syncStatus{font-family:monospace;font-size:.92rem;background:#f7f7f7;padding:10px;border-radius:6px;border-left:4px solid var(--accent)}
-.preview{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.thumb{width:88px;height:88px;object-fit:cover;border:1px solid #ccc;border-radius:8px;background:#fafafa}
-.sigwrap{border:1px solid #ccc;border-radius:8px;background:#fff;overflow:hidden}
-canvas{touch-action:none;display:block;width:100%;height:220px;background:#fff}
-.small{font-size:.76rem;color:#666;line-height:1.35}
-.hidden{display:none}
-@media print{nav,.btn-tool,.btn-full,.no-print{display:none !important}.section{display:block !important}.card{break-inside:avoid}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Investigator Pro">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Utility Field Investigator Pro v2</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="utility_icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="utility_icon.png">
+
+    <style>
+        :root{--primary:#004a99;--accent:#ff8c00;--secondary:#28a745;--danger:#d9534f;--bg:#f4f7f6;--text:#333;--card:#fff;--border:#ced4da}
+        body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}
+        body.solar-mode{--bg:#fff;--text:#000;--card:#fff;--border:#000}
+        nav{display:flex;background:var(--primary);position:sticky;top:0;z-index:100}
+        nav button{flex:1;padding:14px;border:none;background:none;color:#fff;font-weight:700;font-size:11px;border-bottom:4px solid transparent;text-transform:uppercase}
+        nav button.active{border-bottom-color:#fff;background:rgba(255,255,255,.12)}
+        .container{max-width:1000px;margin:auto;padding:14px}.section{display:none}.section.active{display:block}
+        .card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 4px 15px rgba(0,0,0,.09);border:1px solid var(--border)}
+        h3{font-size:.82rem;margin:0 0 10px;color:var(--primary);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #eee;padding-bottom:6px}
+        .row{display:flex;gap:8px;flex-wrap:wrap}.col{flex:1;min-width:220px}
+        label{display:block;font-weight:700;margin:10px 0 5px;font-size:.75rem}
+        input,textarea,select{width:100%;padding:12px;border:1px solid var(--border);border-radius:6px;box-sizing:border-box;font-size:1rem;background:#fff}
+        textarea{resize:vertical}
+        .btn-tool,.btn-full{border:none;border-radius:8px;cursor:pointer;font-weight:700}
+        .btn-tool{background:#eee;border:1px solid #ccc;padding:10px 12px;font-size:.8rem;min-width:120px}.btn-full{width:100%;padding:14px;background:var(--primary);color:#fff;margin-top:10px}
+        .badge{background:#333;color:#fff;padding:4px 8px;border-radius:4px;font-size:.7rem;font-weight:700;display:inline-block;margin-right:6px}
+        .badge.good{background:#1f7a3b}.badge.warn{background:#b06b00}.badge.bad{background:#8d1c1c}
+        #gps-data,#jurisdictionBanner,#syncStatus{font-family:monospace;font-size:.92rem;background:#f7f7f7;padding:10px;border-radius:6px;border-left:4px solid var(--accent)}
+        .preview{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.thumb{width:88px;height:88px;object-fit:cover;border:1px solid #ccc;border-radius:8px;background:#fafafa}
+        .sigwrap{border:1px solid #ccc;border-radius:8px;background:#fff;overflow:hidden}
+        canvas{touch-action:none;display:block;width:100%;height:220px;background:#fff}
+        .small{font-size:.76rem;color:#666;line-height:1.35}
+        .hidden{display:none}
+        @media print{nav,.btn-tool,.btn-full,.no-print{display:none !important}.section{display:block !important}.card{break-inside:avoid}}
+    </style>
 </head>
+
 <body>
 <div id="modal" class="modal hidden"></div>
 <nav>
