@@ -1,0 +1,14 @@
+QUICK START GUIDE
+
+1. Open utility_field_investigator_pro_v2.html in a modern browser.
+2. Allow location access if you want automatic jurisdiction detection.
+3. Enter the incident details, checklist items, and notes.
+4. Use the photo upload button to attach field photos.
+5. Draw the signature on the signature pad and save it.
+6. Use Save Draft to store the case locally in the browser.
+7. Copy Report or Save TXT when the field summary is ready.
+
+Tips:
+- Use Solar Mode outdoors for better visibility.
+- If GPS is weak, manually confirm the state from the jurisdiction badge.
+- The pocket book tab lets you search state reference summaries quickly.
