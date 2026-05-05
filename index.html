@@ -3,227 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Utility Damage Investigator Pro v4</title>
+<title>Utility Investigator Pro v4</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
 <style>
-:root{--primary:#004a99;--accent:#ff8c00;--secondary:#28a745;--danger:#d9534f;--bg:#f4f7f6;--text:#333;--card:#fff;--border:#ced4da}
-body.glare-mode{--bg:#000;--text:#ffff00;--card:#111;--border:#ffff00;--primary:#ffff00;--accent:#fff}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0;transition:0.2s}
-
-nav{display:flex;background:var(--primary);position:sticky;top:0;z-index:100;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
-nav button{flex:1;padding:15px 5px;border:none;background:none;color:#fff;font-weight:700;font-size:10px;text-transform:uppercase;border-bottom:4px solid transparent}
-nav button.active{border-bottom-color:var(--accent);background:rgba(255,255,255,0.1)}
-body.glare-mode nav button{color:#000}
-
+:root{--primary:#004a99;--accent:#ff8c00;--bg:#f4f7f6;--text:#333;--card:#fff;--border:#ced4da}
+body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text);margin:0}
+nav{display:flex;background:var(--primary);position:sticky;top:0;z-index:1000}
+nav button{flex:1;padding:15px;border:none;background:none;color:#fff;font-weight:700;font-size:10px;text-transform:uppercase}
 .container{max-width:800px;margin:auto;padding:15px}
-.section{display:none}
-.section.active{display:block}
-.card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:15px;border:1px solid var(--border);box-shadow:0 2px 4px rgba(0,0,0,0.05)}
-h3{margin:0 0 12px;font-size:0.85rem;color:var(--primary);text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:5px}
-
-label{display:block;font-weight:700;font-size:0.75rem;margin:10px 0 5px}
-input,select,textarea{width:100%;padding:12px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px;font-size:1rem;background:var(--card);color:var(--text)}
-
-.btn-main{width:100%;padding:16px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-weight:700;margin-top:10px;cursor:pointer}
-body.glare-mode .btn-main{color:#000}
-
-#tolCanvas{background:#eee;border-radius:50%;display:block;margin:10px auto;border:2px solid #ccc}
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:10px}
-.photo-grid img{width:100%;border-radius:6px;border:1px solid var(--border)}
-canvas#sigCanvas{width:100%;height:150px;touch-action:none;border:1px solid var(--border);background:#fff;border-radius:8px}
+.card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:15px;border:1px solid var(--border);box-shadow:0 4px 6px rgba(0,0,0,0.1)}
+h3{font-size:0.85rem;margin:0 0 12px;text-transform:uppercase;color:var(--primary);border-bottom:1px solid var(--border);padding-bottom:5px}
+.btn-main{width:100%;padding:16px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer}
+.photo-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:10px}
+.photo-preview img{width:100%;border-radius:6px;border:1px solid var(--border)}
+#gps-status{font-size:0.8rem;background:#eee;padding:8px;border-radius:4px;margin-bottom:10px;font-family:monospace}
 </style>
 </head>
 <body>
 
 <nav>
-    <button onclick="showTab('intake')" id="tab-intake" class="active">Intake</button>
-    <button onclick="showTab('audit')" id="tab-audit">Audit</button>
-    <button onclick="showTab('evidence')" id="tab-evidence">Evidence</button>
-    <button onclick="showTab('pocket')" id="tab-pocket">Pocket Book</button>
+    <button onclick="location.reload()">Refresh App</button>
 </nav>
 
 <div class="container">
-    <div id="intake" class="section active">
-        <button class="btn-main" style="background:#444" onclick="toggleGlare()">🔆 Toggle Glare Mode</button>
-        <div class="card">
-            <h3>Investigation Header</h3>
-            <label>GPS Coordinates (Secure Evidence)</label>
-            <input type="text" id="gpsDisplay" readonly placeholder="Capturing satellite lock...">
-            <button class="btn-main" onclick="fetchGPS()">📍 Capture Location</button>
-            <label>Claim / Reference ID</label>
-            <input type="text" id="claimId" placeholder="e.g. 2026-OH-001">
-            <label>Incident Street Address</label>
-            <input type="text" id="address">
-        </div>
+    <div class="card">
+        <h3>1. Location Capture</h3>
+        <div id="gps-status">GPS: Not Captured</div>
+        <button class="btn-main" style="background:#666" onclick="getGPS()">📍 Sync GPS Coordinates</button>
     </div>
 
-    <div id="audit" class="section">
-        <div class="card">
-            <h3>Visual Tolerance Zone (ANSI/State Law)</h3>
-            <label>Asset Class (Determines Zone Radius)</label>
-            <select id="assetType" onchange="drawTol()">
-                <option value="18">Standard Utility (18" Zone)</option>
-                <option value="24">High Risk / Gas (24" Zone)</option>
-            </select>
-            <label>Measured Offset from Marks (Inches)</label>
-            <input type="number" id="offset" value="12" oninput="drawTol()">
-            <canvas id="tolCanvas" width="200" height="200"></canvas>
-            <div id="tolStatus" style="text-align:center; font-weight:bold"></div>
-        </div>
-        <div class="card">
-            <h3>Compliance Checklist (CGA & ANSI)</h3>
-            <label><input type="checkbox" id="c1"> Potholing Completed (CGA 5-19 / QL-A)</label>
-            <label><input type="checkbox" id="c2"> Tracer Wire Present/Functional (CGA 5-17)</label>
-            <label><input type="checkbox" id="c3"> Positive Response Checked (ANSI 38-22)</label>
-            <label>DIRT Root Cause Category</label>
-            <select id="rootCause">
-                <option>1. Excavation Practice Standard Not Followed</option>
-                <option>2. Locating Issue / Marking Accuracy</option>
-                <option>3. No Notification to One-Call Center</option>
-                <option>4. Facility Not Found (No Tracer Wire/QL-D)</option>
-            </select>
-        </div>
-    </div>
-
-    <div id="evidence" class="section">
-        <div class="card">
-            <h3>Forensic Evidence Photos</h3>
-            <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none" onchange="procFile(this.files)">
-            <input type="file" id="galleryInput" accept="image/*" multiple style="display:none" onchange="procFile(this.files)">
-            
-            <div style="display:flex; gap:10px">
-                <button class="btn-main" onclick="document.getElementById('cameraInput').click()">📸 Use Camera</button>
-                <button class="btn-main" style="background:#666" onclick="document.getElementById('galleryInput').click()">📁 Use Gallery</button>
-            </div>
-            <div id="preview" class="photo-grid"></div>
-            <p style="font-size:0.65rem; margin-top:10px; color:#666">* All photos are watermarked with GPS/Time for court.</p>
-        </div>
-        <div class="card">
-            <h3>Signature Attestation</h3>
-            <canvas id="sigCanvas"></canvas>
-            <button class="btn-main" style="background:#999" onclick="clearSig()">Clear Signature</button>
-            <button class="btn-main" style="background:var(--secondary)" onclick="copyReport()">📋 Copy Final Field Report</button>
-        </div>
-    </div>
-
-    <div id="pocket" class="section">
-        <div class="card">
-            <h3>Pocket Book Reference</h3>
-            <input type="text" id="search" onkeyup="searchStandards()" placeholder="Search State, CGA, or ANSI codes...">
-            <div id="pocketResults" style="margin-top:10px"></div>
-        </div>
+    <div class="card">
+        <h3>2. Evidence Photos</h3>
+        <input type="file" id="evidenceInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files)">
+        <button class="btn-main" onclick="document.getElementById('evidenceInput').click()">📸 Add Camera or Gallery Photo</button>
+        
+        <div id="preview" class="photo-preview"></div>
+        <p style="font-size:0.7rem; color:#888; margin-top:10px;">
+            * Photos are automatically compressed and watermarked with GPS/Time for litigation.
+        </p>
     </div>
 </div>
 
 <script>
-// Hardcoded Professional Reference Data
-const standards = [
-    {n:'Ohio', l:'ORC 3781.25', d:'48hr notice. 15 day life. 18" Tolerance.'},
-    {n:'Pennsylvania', l:'Act 287', d:'3-10 days notice. Duty of care remains with excavator.'},
-    {n:'Michigan', l:'Act 174', d:'Soft excavation required within 18" of marks.'},
-    {n:'CGA 5-19', l:'Best Practice', d:'Hand-digging/Potholing mandatory in tolerance zone.'},
-    {n:'ANSI 38-22', l:'Litigation Standard', d:'QL-A exposure required before mechanical digging.'},
-    {n:'DIRT Code 2', l:'Reporting', d:'Excavator failed to maintain clearance.'}
-];
+let currentGPS = "No GPS Data";
 
-function showTab(id) {
-    if(navigator.vibrate) navigator.vibrate(10);
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.getElementById('tab-' + id).classList.add('active');
-}
-
-function toggleGlare() { document.body.classList.toggle('glare-mode'); }
-
-function fetchGPS() {
+function getGPS() {
     navigator.geolocation.getCurrentPosition(p => {
-        document.getElementById('gpsDisplay').value = `${p.coords.latitude.toFixed(5)}, ${p.coords.longitude.toFixed(5)}`;
-        if(navigator.vibrate) navigator.vibrate(50);
-        drawTol();
-    }, () => alert("GPS lock required for secure evidence."));
+        currentGPS = `${p.coords.latitude.toFixed(5)}, ${p.coords.longitude.toFixed(5)}`;
+        document.getElementById('gps-status').innerText = `GPS: ${currentGPS}`;
+    }, () => alert("Enable GPS for watermarking."));
 }
 
-function drawTol() {
-    const canvas = document.getElementById('tolCanvas');
-    const ctx = canvas.getContext('2d');
-    const offset = document.getElementById('offset').value;
-    const zone = document.getElementById('assetType').value;
-    
-    ctx.clearRect(0,0,200,200);
-    ctx.beginPath();
-    ctx.arc(100, 100, zone * 2, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(217, 83, 79, 0.2)";
-    ctx.fill();
-    ctx.strokeStyle = "#d9534f";
-    ctx.setLineDash([5, 5]);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.setLineDash([]);
-    ctx.arc(100 + (offset * 2), 100, 6, 0, Math.PI * 2);
-    ctx.fillStyle = "#004a99";
-    ctx.fill();
-
-    const status = document.getElementById('tolStatus');
-    status.innerText = offset <= parseInt(zone) ? "⚠️ ENCROACHMENT DETECTED" : "✅ CLEARANCE MAINTAINED";
-    status.style.color = offset <= parseInt(zone) ? "red" : "green";
-}
-
-async function procFile(files) {
+async function handleFiles(files) {
     const preview = document.getElementById('preview');
-    const gps = document.getElementById('gpsDisplay').value || "No GPS Capture";
-    const time = new Date().toLocaleString();
+    const timeStamp = new Date().toLocaleString();
 
     for (let file of files) {
         const img = new Image();
         img.src = URL.createObjectURL(file);
+        
         img.onload = () => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 1000; canvas.height = (img.height * (1000/img.width));
-            ctx.drawImage(img, 0, 0, 1000, canvas.height);
-            ctx.fillStyle = "rgba(0,0,0,0.7)";
-            ctx.fillRect(0, canvas.height - 40, 1000, 40);
-            ctx.fillStyle = "white"; ctx.font = "bold 20px Arial";
-            ctx.fillText(`SECURE EVIDENCE: ${time} | ${gps}`, 20, canvas.height - 15);
             
+            // Forensic Compression (1200px max)
+            const scale = 1200 / img.width;
+            canvas.width = 1200;
+            canvas.height = img.height * scale;
+            
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Forensic Watermark (GPS + Timestamp)
+            ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+            ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+            ctx.fillStyle = "white";
+            ctx.font = "bold 22px Arial";
+            ctx.fillText(`SECURE EVIDENCE | ${timeStamp} | ${currentGPS}`, 20, canvas.height - 18);
+            
+            // Create Thumbnail for App UI
             const thumb = document.createElement('img');
             thumb.src = canvas.toDataURL('image/jpeg', 0.8);
             preview.appendChild(thumb);
+            
+            // Optional: Haptic Feedback on success
+            if(navigator.vibrate) navigator.vibrate(20);
         };
     }
 }
-
-// Signature Initialization
-const sigCanvas = document.getElementById('sigCanvas');
-const sCtx = sigCanvas.getContext('2d');
-let drawing = false;
-sigCanvas.addEventListener('touchstart', e => { drawing = true; sCtx.beginPath(); e.preventDefault(); });
-sigCanvas.addEventListener('touchmove', e => {
-    if(!drawing) return;
-    const r = sigCanvas.getBoundingClientRect();
-    sCtx.lineTo(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
-    sCtx.stroke();
-});
-window.addEventListener('touchend', () => drawing = false);
-function clearSig() { sCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height); }
-
-function searchStandards() {
-    const q = document.getElementById('search').value.toLowerCase();
-    document.getElementById('pocketResults').innerHTML = standards.filter(s => s.n.toLowerCase().includes(q) || s.d.toLowerCase().includes(q))
-        .map(s => `<div style="border-bottom:1px solid #ddd; padding:10px 0"><strong>${s.n} (${s.l})</strong><br><small>${s.d}</small></div>`).join('');
-}
-
-function copyReport() {
-    const report = `INVESTIGATION REPORT\nCLAIM ID: ${document.getElementById('claimId').value}\nGPS: ${document.getElementById('gpsDisplay').value}\nROOT CAUSE: ${document.getElementById('rootCause').value}`;
-    navigator.clipboard.writeText(report);
-    alert("Report copied to clipboard.");
-}
-
-window.onload = () => { searchStandards(); drawTol(); };
 </script>
 </body>
 </html>
