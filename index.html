@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Utility Field Investigator Pro v2.2</title>
+<title>Utility Field Investigator Pro v2.3</title>
 <style>
 :root{--primary:#004a99;--accent:#ff8c00;--secondary:#28a745;--danger:#d9534f;--bg:#f4f7f6;--text:#333;--card:#fff;--border:#ced4da}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}
@@ -141,16 +141,57 @@ canvas{touch-action:none;display:block;width:100%;height:220px;background:#fff}
     </div>
 </div>
 </div>
-<div id="hdd" class="section"><div class="card"><h3>Bore/HDD Forensic Audit</h3><textarea id="hddNotes" rows="6"></textarea></div></div>
-<div id="reference" class="section"><div class="card"><h3>Pocket Book</h3><input type="text" id="search" onkeyup="filterRef()" placeholder="Search states..."><div id="refList"></div></div></div>
-<div id="settings" class="section"><div class="card"><h3>Settings</h3><select id="defaultState"></select><select id="autosave"><option>On</option><option>Off</option></select></div></div>
+
+<div id="hdd" class="section">
+    <div class="card">
+        <h3>Bore Work / HDD Forensic Audit</h3>
+        <div class="row">
+            <div class="col"><label>Crossing potholed?</label><input type="checkbox" id="h1"></div>
+            <div class="col"><label>Bore log provided?</label><input type="checkbox" id="h2"></div>
+            <div class="col"><label>Sonde tracking active?</label><input type="checkbox" id="h3"></div>
+            <div class="col"><label>Sonde data vs log sync?</label><input type="checkbox" id="h4"></div>
+        </div>
+        <label>Drill Speed Assessment</label>
+        <select id="boreSpeed">
+            <option>Consistent with Tracker</option>
+            <option>Outran Tracker (Boring Blind)</option>
+            <option>Inconsistent/High</option>
+        </select>
+        <label>HDD Notes</label>
+        <textarea id="hddNotes" rows="6"></textarea>
+    </div>
+</div>
+
+<div id="reference" class="section">
+    <div class="card">
+        <h3>Pocket Book Search</h3>
+        <input type="text" id="search" onkeyup="filterRef()" placeholder="Search by state, code, notice..." style="width:100%;padding:12px;border-radius:6px;border:1px solid #ccc;margin-bottom:10px;">
+        <div id="pocketMeta" class="small">Showing all jurisdictions.</div>
+    </div>
+    <div id="refList"></div>
+</div>
+
+<div id="settings" class="section">
+    <div class="card">
+        <h3>Settings</h3>
+        <div class="row">
+            <div class="col"><label>Default State</label><select id="defaultState"></select></div>
+            <div class="col"><label>Units</label><select id="units"><option>Imperial</option><option>Metric</option></select></div>
+        </div>
+        <div class="row">
+            <div class="col"><label>Report Style</label><select id="reportStyle"><option>Field Summary</option><option>Formal Incident</option></select></div>
+            <div class="col"><label>Auto-save Draft</label><select id="autosave"><option>On</option><option>Off</option></select></div>
+        </div>
+        <button class="btn-full" onclick="seedDefaults()">Restore App Defaults</button>
+    </div>
+</div>
 </div>
 
 <script>
 const states=[['AL','Alabama',18,'Alabama 811','2 biz days'],['AK','Alaska',18,'Alaska 811','2 working days'],['AZ','Arizona',18,'Arizona 811','2 working days'],['AR','Arkansas',18,'Arkansas One Call','2 biz days'],['CA','California',24,'USA North','2 working days'],['CO','Colorado',18,'Colorado 811','2 biz days'],['CT','Connecticut',18,'CBYD','2 working days'],['DE','Delaware',18,'Miss Utility','2 biz days'],['FL','Florida',24,'Sunshine 811','2 biz days'],['GA','Georgia',24,'Georgia 811','2 biz days'],['HI','Hawaii',18,'Hawaii One Call','2 working days'],['ID','Idaho',24,'Idaho 811','2 biz days'],['IL','Illinois',18,'JULIE','2 working days'],['IN','Indiana',24,'Indiana 811','2 working days'],['IA','Iowa',18,'Iowa One Call','2 biz days'],['KS','Kansas',18,'Kansas 811','2 biz days'],['KY','Kentucky',18,'Kentucky 811','2 working days'],['LA','Louisiana',18,'Louisiana 811','2 working days'],['ME','Maine',18,'Dig Safe','3 biz days'],['MD','Maryland',18,'Miss Utility','2 working days'],['MA','Massachusetts',18,'Dig Safe','3 biz days'],['MI','Michigan',18,'MISS DIG','3 working days'],['MN','Minnesota',18,'GSOC','2 biz days'],['MS','Mississippi',18,'Mississippi 811','2 working days'],['MO','Missouri',18,'MOCIC','2 working days'],['MT','Montana',18,'Montana 811','2 working days'],['NE','Nebraska',18,'Nebraska811','2 working days'],['NV','Nevada',18,'Nevada 811','2 biz days'],['NH','New Hampshire',18,'Dig Safe','3 biz days'],['NJ','New Jersey',18,'NJ One Call','3 biz days'],['NM','New Mexico',18,'NM811','2 biz days'],['NY','New York',18,'NY811','2 working days'],['NC','North Carolina',30,'NC 811','2 biz days'],['ND','North Dakota',18,'ND One Call','2 biz days'],['OH','Ohio',18,'Ohio 811','48 hrs (2 working days)'],['OK','Oklahoma',18,'OKIE 811','2 working days'],['OR','Oregon',24,'Oregon 811','2 biz days'],['PA','Pennsylvania',18,'PA One Call','3 biz days'],['RI','Rhode Island',18,'Dig Safe','3 biz days'],['SC','South Carolina',18,'SC811','3 biz days'],['SD','South Dakota',18,'SD811','2 biz days'],['TN','Tennessee',18,'TN811','3 biz days'],['TX','Texas',18,'Texas 811','2 biz days'],['UT','Utah',18,'Blue Stakes','2 biz days'],['VT','Vermont',18,'Dig Safe','2 biz days'],['VA','Virginia',18,'VA811','3 working days'],['WA','Washington',18,'WA811','2 biz days'],['WV','West Virginia',18,'WV811','2 biz days'],['WI','Wisconsin',18,'Diggers Hotline','3 working days'],['WY','Wyoming',18,'WY811','2 biz days']];
 const stateMap=Object.fromEntries(states.map(s=>[s[0],{code:s[0],name:s[1],tz:s[2],onecall:s[3],notice:s[4]}]));
 let currentState=stateMap.OH;
-const draftKeys=['claimId','address','asset','cam','incidentTime','siteWeather','a1','a2','a3','a4','a5','a6','scar','depth','soil','photoNotes','pDia','dOff','root','notes','hddNotes','defaultState','autosave'];
+const draftKeys=['claimId','address','asset','cam','incidentTime','siteWeather','a1','a2','a3','a4','a5','a6','scar','depth','soil','photoNotes','pDia','dOff','root','notes','h1','h2','h3','h4','boreSpeed','hddNotes','defaultState','units','reportStyle','autosave'];
 let sigData=''; let sigCtx, sigCanvas, drawing=false; let isManualTime = false;
 
 function q(id){return document.getElementById(id)}
@@ -164,7 +205,7 @@ function syncTimeToPhone() {
 
 async function getGPS(){
     if(!navigator.geolocation){q('gps-data').innerText='GPS not supported.';return}
-    q('gps-data').innerText = "Syncing satellite data...";
+    q('gps-data').innerText = "Syncing satellites...";
     navigator.geolocation.getCurrentPosition(async pos=>{
         const lat=pos.coords.latitude.toFixed(5), lon=pos.coords.longitude.toFixed(5);
         q('gps-data').innerHTML=`COORD: ${lat}, ${lon}<br>ACCURACY: +/- ${pos.coords.accuracy.toFixed(1)}m`;
@@ -179,7 +220,8 @@ async function getGPS(){
         try {
             const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
             const geoData = await geoRes.json();
-            setJurisdiction(normalizeState(geoData?.address?.state),'gps');
+            const sCode = normalizeState(geoData?.address?.state);
+            setJurisdiction(sCode,'gps');
 
             const wxRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
             const wxData = await wxRes.json();
@@ -204,6 +246,7 @@ function setJurisdiction(code,source='manual'){
     q('tzDisplay').innerText = `TZ: ${currentState.tz}\"`;
     q('jurisdictionBanner').innerText = `Detected: ${currentState.name} | 811: ${currentState.onecall} | Notice: ${currentState.notice}`;
     calc();
+    buildPocket();
 }
 
 function calc(){
@@ -213,6 +256,14 @@ function calc(){
     else if(off<=limit){r.innerText=`⚠️ Inside TZ (${limit.toFixed(2)}\")`; r.style.background='#f8d7da'}
     else{r.innerText=`✅ Outside TZ (${limit.toFixed(2)}\")`; r.style.background='#d4edda'}
 }
+
+function buildPocket(){
+    const qv=(q('search').value||'').toLowerCase();
+    const list=states.map(s=>({code:s[0],name:s[1],tz:s[2],onecall:s[3],notice:s[4]})).filter(r=>`${r.code} ${r.name}`.toLowerCase().includes(qv));
+    q('pocketMeta').innerText=`Showing ${list.length} jurisdictions.`;
+    q('refList').innerHTML=list.map(r=>`<div class="card"><h3>${r.name} (${r.code})</h3><div class="small">811: ${r.onecall}<br>TZ: ${r.tz}" | Notice: ${r.notice}</div></div>`).join('');
+}
+function filterRef(){buildPocket()}
 
 function initSig(){
     sigCanvas=q('sig'); sigCtx=sigCanvas.getContext('2d');
@@ -232,14 +283,32 @@ function initSig(){
 }
 
 function clearSig(){sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height); sigData='';}
-function saveSig(){sigData=sigCanvas.toDataURL();}
-function tab(n){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));q(n).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));}
-function copyReport(){navigator.clipboard.writeText(q('notes').value).then(()=>alert('Copied!'));}
+function saveSig(){sigData=sigCanvas.toDataURL(); alert('Signature saved to draft.');}
+function tab(n){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));q(n).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));q('btn-'+(n==='investigation'?'inv':n.substring(0,3))).classList.add('active')}
+
+function saveDraft(){localStorage.setItem('ufi_v2_draft', JSON.stringify(getFormData())); alert('Draft saved.');}
+function loadDraft(){const d=localStorage.getItem('ufi_v2_draft'); if(d) applyFormData(JSON.parse(d));}
+function getFormData(){const o={}; draftKeys.forEach(k=>{const el=q(k); if(el) o[k]=el.type==='checkbox'?el.checked:el.value}); return o;}
+function applyFormData(o){draftKeys.forEach(k=>{const el=q(k); if(el && o[k]!==undefined) {if(el.type==='checkbox') el.checked=o[k]; else el.value=o[k];}});}
+
+function copyReport(){
+    const report = `FIELD REPORT\nClaim: ${q('claimId').value}\nState: ${currentState.name}\nResult: ${q('res').innerText}\nNotes: ${q('notes').value}`;
+    navigator.clipboard.writeText(report).then(()=>alert('Report copied!'));
+}
+
+function seedDefaults(){
+    q('defaultState').value='OH'; q('units').value='Imperial'; q('reportStyle').value='Field Summary'; q('autosave').value='On'; setJurisdiction('OH','default');
+}
 
 function init(){
+    Object.keys(stateMap).forEach(k=>{
+        const o=document.createElement('option'); o.value=k; o.textContent=`${k} - ${stateMap[k].name}`;
+        q('defaultState').appendChild(o);
+    });
     initSig();
     syncTimeToPhone();
     q('incidentTime').addEventListener('input', () => isManualTime = true);
+    buildPocket();
     getGPS();
 }
 window.onload=init;
