@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Utility Field Investigator Pro v2.1</title>
+<title>Utility Field Investigator Pro v2.2</title>
 <style>
 :root{--primary:#004a99;--accent:#ff8c00;--secondary:#28a745;--danger:#d9534f;--bg:#f4f7f6;--text:#333;--card:#fff;--border:#ced4da}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}
@@ -26,7 +26,6 @@ input,textarea,select{width:100%;padding:12px;border:1px solid var(--border);bor
 .sigwrap{border:1px solid #ccc;border-radius:8px;background:#fff;overflow:hidden}
 canvas{touch-action:none;display:block;width:100%;height:220px;background:#fff}
 .small{font-size:.76rem;color:#666;line-height:1.35}
-.hidden{display:none}
 @media print{nav,.btn-tool,.btn-full,.no-print{display:none !important}.section{display:block !important}.card{break-inside:avoid}}
 </style>
 </head>
@@ -39,21 +38,116 @@ canvas{touch-action:none;display:block;width:100%;height:220px;background:#fff}
 </nav>
 <div class="container">
 <div id="investigation" class="section active">
-<div class="row"><button class="btn-tool" onclick="document.body.classList.toggle('solar-mode')">🔆 Solar Mode</button><button class="btn-tool" onclick="getGPS()">📍 Sync Loc & Time</button><button class="btn-tool" onclick="saveDraft()">💾 Save Draft</button><button class="btn-tool" onclick="loadDraft()">↩️ Load Draft</button></div>
-<div class="card"><h3>1. Location & Jurisdiction</h3><div id="gps-data">Awaiting satellite lock...</div><div style="height:8px"></div><div id="jurisdictionBanner">Jurisdiction: unknown</div><div style="height:8px"></div><div class="row"><span id="stateDisplay" class="badge warn">STATE: --</span><span id="tzDisplay" class="badge">TZ: --</span><span id="confidenceDisplay" class="badge">GPS: --</span><span id="weatherDisplay" class="badge" style="background:var(--primary)">WX: --</span></div><div class="small" id="syncStatus">Location and law data will update after GPS sync.</div></div>
-<div class="card"><h3>2. Incident Details</h3><div class="row"><div class="col"><label>Ticket / Claim ID</label><input id="claimId" type="text"></div><div class="col"><label>Incident Address / Intersection</label><input id="address" type="text"></div></div><div class="row"><div class="col"><label>Asset Under Audit</label><select id="asset"><option>Fiber Optic</option><option>Coax/Communication</option><option>Electric (NESC)</option><option>Gas</option><option>Water</option><option>Sewer</option></select></div><div class="col"><label>Surveillance?</label><select id="cam"><option>No</option><option>Yes (Doorbell)</option><option>Yes (Commercial)</option></select></div></div><div class="row"><div class="col"><label>Date / Time (Local)</label><input id="incidentTime" type="datetime-local"></div><div class="col"><label>Weather / Site Notes</label><input id="siteWeather" type="text"></div></div></div>
-<div class="card"><h3>3. Field Checklist</h3><div class="row"><div class="col"><label>Tracer wire</label><input type="checkbox" id="a1"></div><div class="col"><label>In scope</label><input type="checkbox" id="a2"></div><div class="col"><label>Hand-dig</label><input type="checkbox" id="a3"></div><div class="col"><label>811 called</label><input type="checkbox" id="a4"></div><div class="col"><label>Marks visible</label><input type="checkbox" id="a5"></div><div class="col"><label>Potholed</label><input type="checkbox" id="a6"></div></div><label>Scar Classification</label><select id="scar"><option value="Fiber Shear">Fiber Shear</option><option value="Coax Kink">Coax Kink</option><option value="Gouge">Mechanized Gouge</option><option value="Arc">Arc Burn</option><option value="Bore">Bore Entry</option></select><div class="row"><div class="col"><label>Depth (in)</label><input type="number" id="depth"></div><div class="col"><label>Soil</label><select id="soil"><option>Clay</option><option>Rock/Shale</option><option>Sand</option><option>Mixed Fill</option></select></div></div><input id="photoInput" type="file" accept="image/*" capture="environment" multiple><div id="preview" class="preview"></div><textarea id="photoNotes" rows="3" placeholder="Photo IDs and scene notes..."></textarea></div>
-<div class="card"><h3>4. Signature</h3><div class="sigwrap"><canvas id="sig" width="900" height="220"></canvas></div><div class="row" style="margin-top:10px;"><button class="btn-tool" onclick="clearSig()">Clear</button><button class="btn-tool" onclick="saveSig()">Save</button></div></div>
-<div class="card" style="background:#fffcf5;border:1px solid var(--accent)"><h3>5. Tolerance Logic</h3><div class="row"><div class="col"><label>Asset Dia (in)</label><input type="number" id="pDia" value="0.5" oninput="calc()"></div><div class="col"><label>Dist. from Mark (in)</label><input type="number" id="dOff" oninput="calc()"></div></div><div id="res" style="background:#fff;padding:15px;border-radius:6px;font-weight:700;text-align:center;border:1px solid #ccc;">Pending GPS sync...</div></div>
-<div class="card"><h3>6. Summary & Export</h3><select id="root" style="margin-bottom:10px;"><option value="">-- Root Cause --</option><option value="1">1. No Notification</option><option value="2">2. Improper Excavation</option><option value="3">3. Failure to Maintain Marks</option><option value="4">4. Inaccurate Marking</option><option value="5">5. HDD: No Pothole</option></select><textarea id="notes" rows="4" placeholder="Narrative..."></textarea><div class="row" style="margin-top:10px;"><button class="btn-tool" style="background:var(--secondary);color:#fff;border:none;" onclick="copyReport()">📋 Copy</button><button class="btn-tool" onclick="downloadReport()">⬇️ Save</button><button class="btn-tool" onclick="window.print()">🖨️ Print</button></div></div>
+<div class="row">
+    <button class="btn-tool" onclick="document.body.classList.toggle('solar-mode')">🔆 Solar Mode</button>
+    <button class="btn-tool" onclick="getGPS()">📍 Sync Loc & Time</button>
+    <button class="btn-tool" onclick="saveDraft()">💾 Save Draft</button>
+    <button class="btn-tool" onclick="loadDraft()">↩️ Load Draft</button>
 </div>
-<div id="hdd" class="section"><div class="card"><h3>Bore/HDD Audit</h3><textarea id="hddNotes" rows="4"></textarea></div></div>
+<div class="card">
+    <h3>1. Location & Jurisdiction</h3>
+    <div id="gps-data">Awaiting satellite lock...</div>
+    <div style="height:8px"></div>
+    <div id="jurisdictionBanner">Jurisdiction: unknown</div>
+    <div style="height:8px"></div>
+    <div class="row">
+        <span id="stateDisplay" class="badge warn">STATE: --</span>
+        <span id="tzDisplay" class="badge">TZ: --</span>
+        <span id="confidenceDisplay" class="badge">GPS: --</span>
+        <span id="weatherDisplay" class="badge" style="background:var(--primary)">WX: --</span>
+    </div>
+    <div class="small" id="syncStatus">Location, weather, and law data update after GPS sync.</div>
+</div>
+<div class="card">
+    <h3>2. Incident Details</h3>
+    <div class="row">
+        <div class="col"><label>Ticket / Claim ID</label><input id="claimId" type="text"></div>
+        <div class="col"><label>Incident Address / Intersection</label><input id="address" type="text"></div>
+    </div>
+    <div class="row">
+        <div class="col"><label>Asset Under Audit</label>
+            <select id="asset">
+                <option>Fiber Optic</option><option>Coax/Communication</option><option>Electric (NESC)</option>
+                <option>Gas</option><option>Water</option><option>Sewer</option>
+            </select>
+        </div>
+        <div class="col"><label>Surveillance?</label>
+            <select id="cam"><option>No</option><option>Yes (Doorbell)</option><option>Yes (Commercial)</option></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col"><label>Date / Time (Local)</label><input id="incidentTime" type="datetime-local"></div>
+        <div class="col"><label>Weather / Site Notes</label><input id="siteWeather" type="text"></div>
+    </div>
+</div>
+<div class="card">
+    <h3>3. Field Checklist</h3>
+    <div class="row">
+        <div class="col"><label>Tracer wire</label><input type="checkbox" id="a1"></div>
+        <div class="col"><label>In scope</label><input type="checkbox" id="a2"></div>
+        <div class="col"><label>Hand-dig</label><input type="checkbox" id="a3"></div>
+        <div class="col"><label>811 called</label><input type="checkbox" id="a4"></div>
+        <div class="col"><label>Marks visible</label><input type="checkbox" id="a5"></div>
+        <div class="col"><label>Potholed</label><input type="checkbox" id="a6"></div>
+    </div>
+    <label>Scar Classification</label>
+    <select id="scar">
+        <option value="Fiber Shear">Fiber Shear</option><option value="Coax Kink">Coax Kink</option>
+        <option value="Gouge">Mechanized Gouge</option><option value="Arc">Arc Burn</option>
+        <option value="Bore">Bore Entry</option>
+    </select>
+    <div class="row">
+        <div class="col"><label>Depth (in)</label><input type="number" id="depth"></div>
+        <div class="col"><label>Soil</label>
+            <select id="soil"><option>Clay</option><option>Rock/Shale</option><option>Sand</option><option>Mixed Fill</option></select>
+        </div>
+    </div>
+    <label>Evidence Photos</label>
+    <input id="photoInput" type="file" accept="image/*" capture="environment" multiple>
+    <div id="preview" class="preview"></div>
+    <textarea id="photoNotes" rows="3" placeholder="Photo IDs and scene notes..."></textarea>
+</div>
+<div class="card">
+    <h3>4. Signature Capture</h3>
+    <div class="sigwrap"><canvas id="sig" width="900" height="220"></canvas></div>
+    <div class="row" style="margin-top:10px;">
+        <button class="btn-tool" onclick="clearSig()">Clear</button>
+        <button class="btn-tool" onclick="saveSig()">Save Signature</button>
+    </div>
+</div>
+<div class="card" style="background:#fffcf5;border:1px solid var(--accent)">
+    <h3>5. Tolerance Logic</h3>
+    <div class="row">
+        <div class="col"><label>Asset Dia (in)</label><input type="number" id="pDia" value="0.5" oninput="calc()"></div>
+        <div class="col"><label>Dist. from Mark (in)</label><input type="number" id="dOff" oninput="calc()"></div>
+    </div>
+    <div id="res" style="background:#fff;padding:15px;border-radius:6px;font-weight:700;text-align:center;border:1px solid #ccc;">Pending GPS sync...</div>
+</div>
+<div class="card">
+    <h3>6. Summary & Export</h3>
+    <select id="root" style="margin-bottom:10px;">
+        <option value="">-- Root Cause --</option>
+        <option value="1">1. No Notification</option>
+        <option value="2">2. Improper Excavation</option>
+        <option value="3">3. Failure to Maintain Marks</option>
+        <option value="4">4. Inaccurate Marking</option>
+        <option value="5">5. HDD: No Pothole</option>
+    </select>
+    <textarea id="notes" rows="4" placeholder="Narrative..."></textarea>
+    <div class="row" style="margin-top:10px;">
+        <button class="btn-tool" style="background:var(--secondary);color:#fff;border:none;" onclick="copyReport()">📋 Copy Report</button>
+        <button class="btn-tool" onclick="downloadReport()">⬇️ Save TXT</button>
+        <button class="btn-tool" onclick="window.print()">🖨️ Print PDF</button>
+    </div>
+</div>
+</div>
+<div id="hdd" class="section"><div class="card"><h3>Bore/HDD Forensic Audit</h3><textarea id="hddNotes" rows="6"></textarea></div></div>
 <div id="reference" class="section"><div class="card"><h3>Pocket Book</h3><input type="text" id="search" onkeyup="filterRef()" placeholder="Search states..."><div id="refList"></div></div></div>
 <div id="settings" class="section"><div class="card"><h3>Settings</h3><select id="defaultState"></select><select id="autosave"><option>On</option><option>Off</option></select></div></div>
 </div>
 
 <script>
-const states=[['AL','Alabama',18,'Alabama 811','2 business days'],['AK','Alaska',18,'Alaska 811','2 working days'],['AZ','Arizona',18,'Arizona 811','2 working days'],['AR','Arkansas',18,'Arkansas One Call','2 business days'],['CA','California',24,'USA','2 working days'],['CO','Colorado',18,'Colorado 811','2 business days'],['CT','Connecticut',18,'CBYD','2 working days'],['DE','Delaware',18,'Miss Utility','2 business days'],['FL','Florida',24,'Sunshine 811','2 business days'],['GA','Georgia',24,'Georgia 811','2 business days'],['HI','Hawaii',18,'Hawaii One Call','2 working days'],['ID','Idaho',24,'Idaho 811','2 business days'],['IL','Illinois',18,'JULIE','2 working days'],['IN','Indiana',24,'Indiana 811','2 working days'],['IA','Iowa',18,'Iowa One Call','2 business days'],['KS','Kansas',18,'Kansas 811','2 business days'],['KY','Kentucky',18,'Kentucky 811','2 working days'],['LA','Louisiana',18,'Louisiana 811','2 working days'],['ME','Maine',18,'Dig Safe','3 business days'],['MD','Maryland',18,'Miss Utility','2 working days'],['MA','Massachusetts',18,'Dig Safe','3 business days'],['MI','Michigan',18,'MISS DIG','3 working days'],['MN','Minnesota',18,'GSOC','2 business days'],['MS','Mississippi',18,'Mississippi 811','2 working days'],['MO','Missouri',18,'MOCIC','2 working days'],['MT','Montana',18,'Montana 811','2 working days'],['NE','Nebraska',18,'Nebraska811','2 working days'],['NV','Nevada',18,'Nevada 811','2 business days'],['NH','New Hampshire',18,'Dig Safe','3 business days'],['NJ','New Jersey',18,'NJ One Call','3 business days'],['NM','New Mexico',18,'NM811','2 business days'],['NY','New York',18,'NY811','2 working days'],['NC','North Carolina',30,'NC 811','2 business days'],['ND','North Dakota',18,'ND One Call','2 business days'],['OH','Ohio',18,'Ohio 811','48 hrs (2 working days)'],['OK','Oklahoma',18,'OKIE 811','2 working days'],['OR','Oregon',24,'Oregon 811','2 business days'],['PA','Pennsylvania',18,'PA One Call','3 business days'],['RI','Rhode Island',18,'Dig Safe','3 business days'],['SC','South Carolina',18,'SC811','3 business days'],['SD','South Dakota',18,'SD811','2 business days'],['TN','Tennessee',18,'TN811','3 business days'],['TX','Texas',18,'Texas 811','2 business days'],['UT','Utah',18,'Blue Stakes','2 business days'],['VT','Vermont',18,'Dig Safe','2 business days'],['VA','Virginia',18,'VA811','3 working days'],['WA','Washington',18,'WA811','2 business days'],['WV','West Virginia',18,'WV811','2 business days'],['WI','Wisconsin',18,'Diggers Hotline','3 working days'],['WY','Wyoming',18,'WY811','2 business days']];
+const states=[['AL','Alabama',18,'Alabama 811','2 biz days'],['AK','Alaska',18,'Alaska 811','2 working days'],['AZ','Arizona',18,'Arizona 811','2 working days'],['AR','Arkansas',18,'Arkansas One Call','2 biz days'],['CA','California',24,'USA North','2 working days'],['CO','Colorado',18,'Colorado 811','2 biz days'],['CT','Connecticut',18,'CBYD','2 working days'],['DE','Delaware',18,'Miss Utility','2 biz days'],['FL','Florida',24,'Sunshine 811','2 biz days'],['GA','Georgia',24,'Georgia 811','2 biz days'],['HI','Hawaii',18,'Hawaii One Call','2 working days'],['ID','Idaho',24,'Idaho 811','2 biz days'],['IL','Illinois',18,'JULIE','2 working days'],['IN','Indiana',24,'Indiana 811','2 working days'],['IA','Iowa',18,'Iowa One Call','2 biz days'],['KS','Kansas',18,'Kansas 811','2 biz days'],['KY','Kentucky',18,'Kentucky 811','2 working days'],['LA','Louisiana',18,'Louisiana 811','2 working days'],['ME','Maine',18,'Dig Safe','3 biz days'],['MD','Maryland',18,'Miss Utility','2 working days'],['MA','Massachusetts',18,'Dig Safe','3 biz days'],['MI','Michigan',18,'MISS DIG','3 working days'],['MN','Minnesota',18,'GSOC','2 biz days'],['MS','Mississippi',18,'Mississippi 811','2 working days'],['MO','Missouri',18,'MOCIC','2 working days'],['MT','Montana',18,'Montana 811','2 working days'],['NE','Nebraska',18,'Nebraska811','2 working days'],['NV','Nevada',18,'Nevada 811','2 biz days'],['NH','New Hampshire',18,'Dig Safe','3 biz days'],['NJ','New Jersey',18,'NJ One Call','3 biz days'],['NM','New Mexico',18,'NM811','2 biz days'],['NY','New York',18,'NY811','2 working days'],['NC','North Carolina',30,'NC 811','2 biz days'],['ND','North Dakota',18,'ND One Call','2 biz days'],['OH','Ohio',18,'Ohio 811','48 hrs (2 working days)'],['OK','Oklahoma',18,'OKIE 811','2 working days'],['OR','Oregon',24,'Oregon 811','2 biz days'],['PA','Pennsylvania',18,'PA One Call','3 biz days'],['RI','Rhode Island',18,'Dig Safe','3 biz days'],['SC','South Carolina',18,'SC811','3 biz days'],['SD','South Dakota',18,'SD811','2 biz days'],['TN','Tennessee',18,'TN811','3 biz days'],['TX','Texas',18,'Texas 811','2 biz days'],['UT','Utah',18,'Blue Stakes','2 biz days'],['VT','Vermont',18,'Dig Safe','2 biz days'],['VA','Virginia',18,'VA811','3 working days'],['WA','Washington',18,'WA811','2 biz days'],['WV','West Virginia',18,'WV811','2 biz days'],['WI','Wisconsin',18,'Diggers Hotline','3 working days'],['WY','Wyoming',18,'WY811','2 biz days']];
 const stateMap=Object.fromEntries(states.map(s=>[s[0],{code:s[0],name:s[1],tz:s[2],onecall:s[3],notice:s[4]}]));
 let currentState=stateMap.OH;
 const draftKeys=['claimId','address','asset','cam','incidentTime','siteWeather','a1','a2','a3','a4','a5','a6','scar','depth','soil','photoNotes','pDia','dOff','root','notes','hddNotes','defaultState','autosave'];
@@ -61,46 +155,54 @@ let sigData=''; let sigCtx, sigCanvas, drawing=false; let isManualTime = false;
 
 function q(id){return document.getElementById(id)}
 
-// --- TIME FIX LOGIC ---
 function syncTimeToPhone() {
     if (isManualTime) return;
     const now = new Date();
-    // Format to YYYY-MM-DDTHH:MM for the datetime-local input
     const offset = now.getTimezoneOffset() * 60000;
-    const localISO = new Date(now - offset).toISOString().slice(0, 16);
-    q('incidentTime').value = localISO;
+    q('incidentTime').value = new Date(now - offset).toISOString().slice(0, 16);
 }
 
 async function getGPS(){
-    if(!navigator.geolocation){q('gps-data').innerText='No GPS support.';return}
+    if(!navigator.geolocation){q('gps-data').innerText='GPS not supported.';return}
+    q('gps-data').innerText = "Syncing satellite data...";
     navigator.geolocation.getCurrentPosition(async pos=>{
-        const lat=pos.coords.latitude.toFixed(5),lon=pos.coords.longitude.toFixed(5);
-        q('gps-data').innerHTML=`COORD: ${lat}, ${lon} (Acc: +/- ${pos.coords.accuracy.toFixed(1)}m)`;
+        const lat=pos.coords.latitude.toFixed(5), lon=pos.coords.longitude.toFixed(5);
+        q('gps-data').innerHTML=`COORD: ${lat}, ${lon}<br>ACCURACY: +/- ${pos.coords.accuracy.toFixed(1)}m`;
         
-        // Sync time whenever GPS sync is pressed
+        const confBadge = q('confidenceDisplay');
+        const conf = pos.coords.accuracy <= 50 ? 'high' : pos.coords.accuracy <= 200 ? 'medium' : 'low';
+        confBadge.className = `badge ${conf === 'high' ? 'good' : conf === 'medium' ? 'warn' : 'bad'}`;
+        confBadge.innerText = `GPS: ${conf}`;
+
         syncTimeToPhone();
 
-        try{
-            const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-            const data=await res.json();
-            const stateCode = normalizeState(data?.address?.state);
-            setJurisdiction(stateCode,'gps');
-        }catch(e){setJurisdiction('OH','fallback')}
-    },()=>{},{enableHighAccuracy:true})}
+        try {
+            const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const geoData = await geoRes.json();
+            setJurisdiction(normalizeState(geoData?.address?.state),'gps');
+
+            const wxRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+            const wxData = await wxRes.json();
+            if(wxData?.current_weather?.temperature != null) {
+                q('weatherDisplay').innerText = `WX: ${(wxData.current_weather.temperature * 9/5 + 32).toFixed(0)}°F`;
+            }
+        } catch(e) { setJurisdiction('OH','fallback'); }
+    },err=>{q('gps-data').innerText='GPS Error: '+err.message},{enableHighAccuracy:true});
+}
 
 function normalizeState(input){
-    if(!input)return'OH';
-    const s=String(input).trim().toUpperCase();
-    if(stateMap[s])return s;
-    for(const [k,v] of Object.entries(stateMap)){if(v.name.toUpperCase()===s)return k}
-    return'OH';
+    if(!input) return 'OH';
+    const s = String(input).trim().toUpperCase();
+    if(stateMap[s]) return s;
+    for(const [k,v] of Object.entries(stateMap)){ if(v.name.toUpperCase()===s || s.includes(v.name.toUpperCase())) return k; }
+    return 'OH';
 }
 
 function setJurisdiction(code,source='manual'){
-    currentState=stateMap[code]||stateMap.OH;
-    q('stateDisplay').innerText=`STATE: ${currentState.name}`;
-    q('tzDisplay').innerText=`TZ: ${currentState.tz}\"`;
-    q('jurisdictionBanner').innerText=`Jurisdiction: ${currentState.name} | 811: ${currentState.onecall} | Notice: ${currentState.notice}`;
+    currentState = stateMap[code]||stateMap.OH;
+    q('stateDisplay').innerText = `STATE: ${currentState.name}`;
+    q('tzDisplay').innerText = `TZ: ${currentState.tz}\"`;
+    q('jurisdictionBanner').innerText = `Detected: ${currentState.name} | 811: ${currentState.onecall} | Notice: ${currentState.notice}`;
     calc();
 }
 
@@ -112,32 +214,32 @@ function calc(){
     else{r.innerText=`✅ Outside TZ (${limit.toFixed(2)}\")`; r.style.background='#d4edda'}
 }
 
-// ... (Existing Signature and Tab logic remains same)
-function tab(name){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));q(name).classList.add('active')}
-function clearSig(){sigCtx.clearRect(0,0,q('sig').width,q('sig').height);sigData=''}
-function saveSig(){sigData=q('sig').toDataURL()}
 function initSig(){
     sigCanvas=q('sig'); sigCtx=sigCanvas.getContext('2d');
     const ratio = window.devicePixelRatio || 1;
     const rect = sigCanvas.getBoundingClientRect();
     sigCanvas.width = rect.width * ratio; sigCanvas.height = rect.height * ratio;
-    sigCtx.scale(ratio, ratio); sigCtx.lineWidth=2; sigCtx.strokeStyle='#000';
-    sigCanvas.addEventListener('mousedown',()=>{drawing=true});
-    window.addEventListener('mouseup',()=>{drawing=false; sigCtx.beginPath()});
-    sigCanvas.addEventListener('mousemove',e=>{
-        if(!drawing)return;
-        const r=sigCanvas.getBoundingClientRect();
-        sigCtx.lineTo(e.clientX-r.left, e.clientY-r.top); sigCtx.stroke();
-    });
+    sigCtx.scale(ratio, ratio); sigCtx.lineWidth=2; sigCtx.strokeStyle='#000'; sigCtx.lineCap='round';
+    const getXY = e => {
+        const r = sigCanvas.getBoundingClientRect();
+        return [(e.touches ? e.touches[0].clientX : e.clientX) - r.left, (e.touches ? e.touches[0].clientY : e.clientY) - r.top];
+    };
+    const start = e => { drawing=true; sigCtx.beginPath(); sigCtx.moveTo(...getXY(e)); if(e.touches) e.preventDefault(); };
+    const move = e => { if(!drawing) return; sigCtx.lineTo(...getXY(e)); sigCtx.stroke(); if(e.touches) e.preventDefault(); };
+    sigCanvas.addEventListener('mousedown', start); sigCanvas.addEventListener('touchstart', start);
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move);
+    window.addEventListener('mouseup', () => drawing=false); window.addEventListener('touchend', () => drawing=false);
 }
+
+function clearSig(){sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height); sigData='';}
+function saveSig(){sigData=sigCanvas.toDataURL();}
+function tab(n){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));q(n).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));}
+function copyReport(){navigator.clipboard.writeText(q('notes').value).then(()=>alert('Copied!'));}
 
 function init(){
     initSig();
-    // Initialize Time
     syncTimeToPhone();
-    // Detect if user manually changes time so we stop auto-syncing
-    q('incidentTime').addEventListener('input', () => { isManualTime = true; });
-    // Default GPS check
+    q('incidentTime').addEventListener('input', () => isManualTime = true);
     getGPS();
 }
 window.onload=init;
